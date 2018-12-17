@@ -110,7 +110,7 @@ Tested on a Raspberry Pi Zero with a clean install of minimal Raspbian Stretch (
 ```
 * Clone enro and checkout most recent release version:
 ```
-        git clone https://github.com/enro-project/enro.git
+        git clone https://github.com/enrocoin/enro.git
 	cd enro
 	git checkout tags/v0.13.0.4
 ```
@@ -201,7 +201,7 @@ application.
 
 * To git clone, run:
 
-        git clone --recursive https://github.com/enro-project/enro.git
+        git clone --recursive https://github.com/enrocoin/enro.git
 
 **Building**
 
@@ -209,7 +209,7 @@ application.
 	
         cd enro
 
-* If you would like a specific [version/tag](https://github.com/enro-project/enro/tags), do a git checkout for that version. eg. 'v0.13.0.0'. If you dont care about the version and just want binaries from master, skip this step:
+* If you would like a specific [version/tag](https://github.com/enrocoin/enro/tags), do a git checkout for that version. eg. 'v0.13.0.0'. If you dont care about the version and just want binaries from master, skip this step:
 	
         git checkout v0.13.0.4
 
