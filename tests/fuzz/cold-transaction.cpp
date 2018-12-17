@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018, The Monero Project
+// Copyright (c) 2017-2018, The Enro Project
 // 
 // All rights reserved.
 // 
@@ -97,8 +97,6 @@ int ColdTransactionFuzzer::run(const std::string &filename)
 
 int main(int argc, const char **argv)
 {
-  TRY_ENTRY();
   ColdTransactionFuzzer fuzzer;
   return run_fuzzer(argc, argv, fuzzer);
-  CATCH_ENTRY_L0("main", 1);
 }

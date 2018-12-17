@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -781,6 +781,9 @@ namespace cryptonote
     {
       std::string tx_as_hex;
       bool do_not_relay;
+
+      request() {}
+      explicit request(const transaction &);
 
       BEGIN_KV_SERIALIZE_MAP()
         KV_SERIALIZE(tx_as_hex)

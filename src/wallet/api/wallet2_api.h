@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -39,7 +39,7 @@
 #include <iostream>
 
 //  Public interface for libwallet library
-namespace Monero {
+namespace Enro {
 
 enum NetworkType : uint8_t {
     MAINNET = 0,
@@ -644,17 +644,6 @@ struct Wallet
     virtual void refreshAsync() = 0;
 
     /**
-     * @brief rescanBlockchain - rescans the wallet, updating transactions from daemon
-     * @return - true if refreshed successfully;
-     */
-    virtual bool rescanBlockchain() = 0;
-
-    /**
-     * @brief rescanBlockchainAsync - rescans wallet asynchronously, starting from genesys
-     */
-    virtual void rescanBlockchainAsync() = 0;
-
-    /**
      * @brief setAutoRefreshInterval - setup interval for automatic refresh.
      * @param seconds - interval in millis. if zero or less than zero - automatic refresh disabled;
      */
@@ -1178,7 +1167,7 @@ struct WalletManager
     //! stops mining
     virtual bool stopMining() = 0;
 
-    //! resolves an OpenAlias address to a monero address
+    //! resolves an OpenAlias address to a enro address
     virtual std::string resolveOpenAlias(const std::string &address, bool &dnssec_valid) const = 0;
 
     //! checks for an update and returns version, hash and url
@@ -1208,5 +1197,5 @@ struct WalletManagerFactory
 
 }
 
-namespace Bitmonero = Monero;
+namespace Bitmonero = Enro;
 

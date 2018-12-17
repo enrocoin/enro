@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -38,7 +38,6 @@ using namespace epee;
 #include "cryptonote_tx_utils.h"
 #include "cryptonote_config.h"
 #include "cryptonote_basic/miner.h"
-#include "cryptonote_basic/tx_extra.h"
 #include "crypto/crypto.h"
 #include "crypto/hash.h"
 #include "ringct/rctSigs.h"
@@ -85,8 +84,6 @@ namespace cryptonote
     if(!extra_nonce.empty())
       if(!add_extra_nonce_to_tx_extra(tx.extra, extra_nonce))
         return false;
-    if (!sort_tx_extra(tx.extra, tx.extra))
-      return false;
 
     txin_gen in;
     in.height = height;
@@ -436,9 +433,6 @@ namespace cryptonote
         LOG_PRINT_L2(additional_tx_public_keys[i]);
       add_additional_tx_pub_keys_to_extra(tx.extra, additional_tx_public_keys);
     }
-
-    if (!sort_tx_extra(tx.extra, tx.extra))
-      return false;
 
     //check money
     if(summary_outs_money > summary_inputs_money )

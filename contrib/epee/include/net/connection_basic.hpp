@@ -1,5 +1,5 @@
 /// @file
-/// @author rfree (current maintainer in monero.cc project)
+/// @author rfree (current maintainer in enro.cc project)
 /// @brief base for connection, contains e.g. the ratelimit hooks
 
 // ! This file might contain variable names same as in template class connection<> 
@@ -8,7 +8,7 @@
 // ! (how ever if in some wonderful juristdictions that is not the case, then why not make another sub-class withat that members and licence it as epee part)
 // ! Working on above premise, IF this is valid in your juristdictions, then consider this code as released as:
 
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -92,6 +92,7 @@ class connection_basic { // not-templated base class for rapid developmet of som
     critical_section m_send_que_lock;
     std::list<std::string> m_send_que;
     volatile bool m_is_multithreaded;
+    double m_start_time;
     /// Strand to ensure the connection's handlers are not called concurrently.
     boost::asio::io_service::strand strand_;
     /// Socket for the connection.
@@ -111,6 +112,8 @@ class connection_basic { // not-templated base class for rapid developmet of som
 		void logger_handle_net_write(size_t size); // network data written
 		void logger_handle_net_read(size_t size); // network data read
 
+		void set_start_time();
+
 		// config for rate limit
 		
 		static void set_rate_up_limit(uint64_t limit);
@@ -124,7 +127,7 @@ class connection_basic { // not-templated base class for rapid developmet of som
 
 		// handlers and sleep
 		void sleep_before_packet(size_t packet_size, int phase, int q_len); // execute a sleep ; phase is not really used now(?)
-		static void save_limit_to_file(int limit); ///< for dr-monero
+		static void save_limit_to_file(int limit); ///< for dr-enro
 		static double get_sleep_time(size_t cb);
 		
 		static void set_save_graph(bool save_graph);

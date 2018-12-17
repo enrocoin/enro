@@ -1,8 +1,8 @@
 /// @file
-/// @author rfree (current maintainer in monero.cc project)
+/// @author rfree (current maintainer in enro.cc project)
 /// @brief base for connection, contains e.g. the ratelimit hooks
 
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -161,7 +161,7 @@ connection_basic::connection_basic(boost::asio::io_service& io_service, std::ato
 	try { boost::system::error_code e; remote_addr_str = socket_.remote_endpoint(e).address().to_string(); } catch(...){} ;
 
 	_note("Spawned connection p2p#"<<mI->m_peer_number<<" to " << remote_addr_str << " currently we have sockets count:" << m_ref_sock_count);
-	//boost::filesystem::create_directories("log/dr-monero/net/");
+	//boost::filesystem::create_directories("log/dr-enro/net/");
 }
 
 connection_basic::~connection_basic() noexcept(false) {
@@ -250,15 +250,22 @@ void connection_basic::sleep_before_packet(size_t packet_size, int phase,  int q
 	}
 
 }
+void connection_basic::set_start_time() {
+	CRITICAL_REGION_LOCAL(	network_throttle_manager::m_lock_get_global_throttle_out );
+	m_start_time = network_throttle_manager::get_global_throttle_out().get_time_seconds();
+}
 
 void connection_basic::do_send_handler_write(const void* ptr , size_t cb ) {
         // No sleeping here; sleeping is done once and for all in connection<t_protocol_handler>::handle_write
 	MTRACE("handler_write (direct) - before ASIO write, for packet="<<cb<<" B (after sleep)");
+	set_start_time();
 }
 
 void connection_basic::do_send_handler_write_from_queue( const boost::system::error_code& e, size_t cb, int q_len ) {
         // No sleeping here; sleeping is done once and for all in connection<t_protocol_handler>::handle_write
 	MTRACE("handler_write (after write, from queue="<<q_len<<") - before ASIO write, for packet="<<cb<<" B (after sleep)");
+
+	set_start_time();
 }
 
 void connection_basic::logger_handle_net_read(size_t size) { // network data read

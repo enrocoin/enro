@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 //
 // All rights reserved.
 //
@@ -40,7 +40,7 @@
 #include <boost/thread/condition_variable.hpp>
 
 
-namespace Monero {
+namespace Enro {
 class TransactionHistoryImpl;
 class PendingTransactionImpl;
 class UnsignedTransactionImpl;
@@ -114,8 +114,6 @@ public:
     bool synchronized() const override;
     bool refresh() override;
     void refreshAsync() override;
-    bool rescanBlockchain() override;
-    void rescanBlockchainAsync() override;    
     void setAutoRefreshInterval(int millis) override;
     int autoRefreshInterval() const override;
     void setRefreshFromBlockHeight(uint64_t refresh_from_block_height) override;
@@ -234,7 +232,6 @@ private:
     std::atomic<bool> m_refreshEnabled;
     std::atomic<bool> m_refreshThreadDone;
     std::atomic<int>  m_refreshIntervalMillis;
-    std::atomic<bool> m_refreshShouldRescan;
     // synchronizing  refresh loop;
     boost::mutex        m_refreshMutex;
 
@@ -257,7 +254,7 @@ private:
 
 } // namespace
 
-namespace Bitmonero = Monero;
+namespace Bitmonero = Enro;
 
 #endif
 

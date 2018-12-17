@@ -1,9 +1,9 @@
-Monero daemon internationalization
+Enro daemon internationalization
 ==================================
 
-The Monero command line tools can be translated in various languages. If you wish to contribute and need help/support, contact the [Monero Localization Workgroup on Taiga](https://taiga.getmonero.org/project/erciccione-monero-localization/) or come chat on `#monero-translations` (Freenode/IRC, riot/matrix, MatterMost)
+The Enro command line tools can be translated in various languages. If you wish to contribute and need help/support, contact the [Enro Localization Workgroup on Taiga](https://enrocoin.org) or come chat on `#enro-translations` (Freenode/IRC, riot/matrix, MatterMost)
 
-In order to use the same translation workflow as the [Monero Core GUI](https://github.com/monero-project/monero-core), they use Qt Linguist translation files.  However, to avoid the dependencies on Qt this normally implies, they use a custom loader to read those files at runtime.
+In order to use the same translation workflow as the [Enro Core GUI](https://github.com/enrocoin/enro-gui), they use Qt Linguist translation files.  However, to avoid the dependencies on Qt this normally implies, they use a custom loader to read those files at runtime.
 
 ### Tools for translators
 
@@ -19,7 +19,7 @@ To update ts files after changing source code:
 
 To add a new language, eg Spanish (ISO code es):
 
-    cp translations/monero.ts translations/monero_es.ts
+    cp translations/enro.ts translations/monero_es.ts
 
 To edit translations for Spanish:
 
@@ -31,7 +31,7 @@ To build translations after modifying them:
 
 To test a translation:
 
-    LANG=es ./build/release/bin/monero-wallet-cli
+    LANG=es ./build/release/bin/enro-wallet-cli
 
 To add new translatable strings in the source code:
 

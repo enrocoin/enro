@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -47,6 +47,7 @@
 #include "crypto/crypto.h"
 #include "crypto/hash.h"
 #include "misc_language.h"
+#include "tx_extra.h"
 #include "ringct/rctTypes.h"
 #include "device/device.hpp"
 

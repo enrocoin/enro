@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -37,8 +37,6 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/join.hpp>
-#include <boost/range/adaptor/transformed.hpp>
 #include "include_base_utils.h"
 using namespace epee;
 
@@ -94,9 +92,9 @@ using namespace cryptonote;
 #define CHACHA8_KEY_TAIL 0x8c
 #define CACHE_KEY_TAIL 0x8d
 
-#define UNSIGNED_TX_PREFIX "Monero unsigned tx set\004"
-#define SIGNED_TX_PREFIX "Monero signed tx set\004"
-#define MULTISIG_UNSIGNED_TX_PREFIX "Monero multisig unsigned tx set\001"
+#define UNSIGNED_TX_PREFIX "Enro unsigned tx set\004"
+#define SIGNED_TX_PREFIX "Enro signed tx set\004"
+#define MULTISIG_UNSIGNED_TX_PREFIX "Enro multisig unsigned tx set\001"
 
 #define RECENT_OUTPUT_RATIO (0.5) // 50% of outputs are from the recent zone
 #define RECENT_OUTPUT_DAYS (1.8) // last 1.8 day makes up the recent zone (taken from monerolink.pdf, Miller et al)
@@ -110,11 +108,11 @@ using namespace cryptonote;
 #define SUBADDRESS_LOOKAHEAD_MAJOR 50
 #define SUBADDRESS_LOOKAHEAD_MINOR 200
 
-#define KEY_IMAGE_EXPORT_FILE_MAGIC "Monero key image export\002"
+#define KEY_IMAGE_EXPORT_FILE_MAGIC "Enro key image export\002"
 
-#define MULTISIG_EXPORT_FILE_MAGIC "Monero multisig export\001"
+#define MULTISIG_EXPORT_FILE_MAGIC "Enro multisig export\001"
 
-#define OUTPUT_EXPORT_FILE_MAGIC "Monero output export\003"
+#define OUTPUT_EXPORT_FILE_MAGIC "Enro output export\003"
 
 #define SEGREGATION_FORK_HEIGHT 99999999
 #define TESTNET_SEGREGATION_FORK_HEIGHT 99999999
@@ -813,7 +811,6 @@ wallet_keys_unlocker::~wallet_keys_unlocker()
 wallet2::wallet2(network_type nettype, uint64_t kdf_rounds, bool unattended):
   m_multisig_rescan_info(NULL),
   m_multisig_rescan_k(NULL),
-  m_upper_transaction_weight_limit(0),
   m_run(true),
   m_callback(0),
   m_trusted_daemon(false),
@@ -846,9 +843,6 @@ wallet2::wallet2(network_type nettype, uint64_t kdf_rounds, bool unattended):
   m_is_initialized(false),
   m_kdf_rounds(kdf_rounds),
   is_old_file_format(false),
-  m_watch_only(false),
-  m_multisig(false),
-  m_multisig_threshold(0),
   m_node_rpc_proxy(m_http_client, m_daemon_rpc_mutex),
   m_subaddress_lookahead_major(SUBADDRESS_LOOKAHEAD_MAJOR),
   m_subaddress_lookahead_minor(SUBADDRESS_LOOKAHEAD_MINOR),
@@ -1314,8 +1308,8 @@ void wallet2::scan_output(const cryptonote::transaction &tx, const crypto::publi
     if (!m_encrypt_keys_after_refresh)
     {
       boost::optional<epee::wipeable_string> pwd = m_callback->on_get_password("output received");
-      THROW_WALLET_EXCEPTION_IF(!pwd, error::password_needed, tr("Password is needed to compute key image for incoming monero"));
-      THROW_WALLET_EXCEPTION_IF(!verify_password(*pwd), error::password_needed, tr("Invalid password: password is needed to compute key image for incoming monero"));
+      THROW_WALLET_EXCEPTION_IF(!pwd, error::password_needed, tr("Password is needed to compute key image for incoming enro"));
+      THROW_WALLET_EXCEPTION_IF(!verify_password(*pwd), error::password_needed, tr("Invalid password: password is needed to compute key image for incoming enro"));
       decrypt_keys(*pwd);
       m_encrypt_keys_after_refresh = *pwd;
     }
@@ -5616,10 +5610,6 @@ bool wallet2::sign_tx(unsigned_tx_set &exported_txs, std::vector<wallet2::pendin
     ptx.construction_data = sd;
 
     txs.push_back(ptx);
-
-    // add tx keys only to ptx
-    txs.back().tx_key = tx_key;
-    txs.back().additional_tx_keys = additional_tx_keys;
   }
 
   // add key images
@@ -6997,8 +6987,6 @@ void wallet2::get_outs(std::vector<std::vector<tools::wallet2::get_outs_entry>> 
           LOG_PRINT_L1("Selecting real output: " << td.m_global_output_index << " for " << print_money(amount));
         }
 
-        std::unordered_map<const char*, std::set<uint64_t>> picks;
-
         // while we still need more mixins
         uint64_t num_usable_outs = num_outs;
         bool allow_blackballed = false;
@@ -7097,14 +7085,10 @@ void wallet2::get_outs(std::vector<std::vector<tools::wallet2::get_outs_entry>> 
           }
           seen_indices.emplace(i);
 
-          picks[type].insert(i);
+          LOG_PRINT_L2("picking " << i << " as " << type);
           req.outputs.push_back({amount, i});
           ++num_found;
         }
-
-        for (const auto &pick: picks)
-          MDEBUG("picking " << pick.first << " outputs: " <<
-              boost::join(pick.second | boost::adaptors::transformed([](uint64_t out){return std::to_string(out);}), " "));
 
         // if we had enough unusable outputs, we might fall off here and still
         // have too few outputs, so we stuff with one to keep counts good, and
@@ -7121,15 +7105,8 @@ void wallet2::get_outs(std::vector<std::vector<tools::wallet2::get_outs_entry>> 
           [](const get_outputs_out &a, const get_outputs_out &b) { return a.index < b.index; });
     }
 
-    if (ELPP->vRegistry()->allowed(el::Level::Debug, MONERO_DEFAULT_LOG_CATEGORY))
-    {
-      std::map<uint64_t, std::set<uint64_t>> outs;
-      for (const auto &i: req.outputs)
-        outs[i.amount].insert(i.index);
-      for (const auto &o: outs)
-        MDEBUG("asking for outputs with amount " << print_money(o.first) << ": " <<
-            boost::join(o.second | boost::adaptors::transformed([](uint64_t out){return std::to_string(out);}), " "));
-    }
+    for (auto i: req.outputs)
+      LOG_PRINT_L1("asking for output " << i.index << " for " << print_money(i.amount));
 
     // get the keys for those
     m_daemon_rpc_mutex.lock();
@@ -10587,7 +10564,7 @@ uint64_t wallet2::import_key_images(const std::vector<std::pair<crypto::key_imag
         + boost::lexical_cast<std::string>(signed_key_images.size()) + ", key image " + epee::string_tools::pod_to_hex(key_image));
 
     THROW_WALLET_EXCEPTION_IF(!crypto::check_ring_signature((const crypto::hash&)key_image, key_image, pkeys, &signature),
-        error::signature_check_failed, boost::lexical_cast<std::string>(n) + "/"
+        error::wallet_internal_error, "Signature check failed: input " + boost::lexical_cast<std::string>(n) + "/"
         + boost::lexical_cast<std::string>(signed_key_images.size()) + ", key image " + epee::string_tools::pod_to_hex(key_image)
         + ", signature " + epee::string_tools::pod_to_hex(signature) + ", pubkey " + epee::string_tools::pod_to_hex(*pkeys[0]));
 
@@ -11358,7 +11335,7 @@ std::string wallet2::make_uri(const std::string &address, const std::string &pay
     }
   }
 
-  std::string uri = "monero:" + address;
+  std::string uri = "enro:" + address;
   unsigned int n_fields = 0;
 
   if (!payment_id.empty())
@@ -11387,9 +11364,9 @@ std::string wallet2::make_uri(const std::string &address, const std::string &pay
 //----------------------------------------------------------------------------------------------------
 bool wallet2::parse_uri(const std::string &uri, std::string &address, std::string &payment_id, uint64_t &amount, std::string &tx_description, std::string &recipient_name, std::vector<std::string> &unknown_parameters, std::string &error)
 {
-  if (uri.substr(0, 7) != "monero:")
+  if (uri.substr(0, 7) != "enro:")
   {
-    error = std::string("URI has wrong scheme (expected \"monero:\"): ") + uri;
+    error = std::string("URI has wrong scheme (expected \"enro:\"): ") + uri;
     return false;
   }
 

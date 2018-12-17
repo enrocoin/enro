@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 //
 // All rights reserved.
 //
@@ -150,7 +150,7 @@ namespace cryptonote
   };
   static const command_line::arg_descriptor<std::string> arg_check_updates = {
     "check-updates"
-  , "Check for new versions of monero: [disabled|notify|download|update]"
+  , "Check for new versions of enro: [disabled|notify|download|update]"
   , "notify"
   };
   static const command_line::arg_descriptor<bool> arg_fluffy_blocks  = {
@@ -389,7 +389,7 @@ namespace cryptonote
     return m_blockchain_storage.get_alternative_blocks_count();
   }
   //-----------------------------------------------------------------------------------------------
-  bool core::init(const boost::program_options::variables_map& vm, const char *config_subdir, const cryptonote::test_options *test_options, const GetCheckpointsCallback& get_checkpoints/* = nullptr */)
+  bool core::init(const boost::program_options::variables_map& vm, const char *config_subdir, const cryptonote::test_options *test_options)
   {
     start_time = std::time(nullptr);
 
@@ -427,8 +427,8 @@ namespace cryptonote
       if (boost::filesystem::exists(old_files / "blockchain.bin"))
       {
         MWARNING("Found old-style blockchain.bin in " << old_files.string());
-        MWARNING("Monero now uses a new format. You can either remove blockchain.bin to start syncing");
-        MWARNING("the blockchain anew, or use monero-blockchain-export and monero-blockchain-import to");
+        MWARNING("Enro now uses a new format. You can either remove blockchain.bin to start syncing");
+        MWARNING("the blockchain anew, or use enro-blockchain-export and enro-blockchain-import to");
         MWARNING("convert your existing blockchain.bin to the new format. See README.md for instructions.");
         return false;
       }
@@ -567,7 +567,7 @@ namespace cryptonote
       regtest_hard_forks
     };
     const difficulty_type fixed_difficulty = command_line::get_arg(vm, arg_fixed_difficulty);
-    r = m_blockchain_storage.init(db.release(), m_nettype, m_offline, regtest ? &regtest_test_options : test_options, fixed_difficulty, get_checkpoints);
+    r = m_blockchain_storage.init(db.release(), m_nettype, m_offline, regtest ? &regtest_test_options : test_options, fixed_difficulty);
 
     r = m_mempool.init(max_txpool_weight);
     CHECK_AND_ASSERT_MES(r, false, "Failed to initialize memory pool");
@@ -1475,7 +1475,7 @@ namespace cryptonote
     {
       std::string main_message;
       if (m_offline)
-        main_message = "The daemon is running offline and will not attempt to sync to the Monero network.";
+        main_message = "The daemon is running offline and will not attempt to sync to the Enro network.";
       else
         main_message = "The daemon will start synchronizing with the network. This may take a long time to complete.";
       MGINFO_YELLOW(ENDL << "**********************************************************************" << ENDL
@@ -1494,7 +1494,6 @@ namespace cryptonote
     m_txpool_auto_relayer.do_call(boost::bind(&core::relay_txpool_transactions, this));
     m_check_updates_interval.do_call(boost::bind(&core::check_updates, this));
     m_check_disk_space_interval.do_call(boost::bind(&core::check_disk_space, this));
-    m_block_rate_interval.do_call(boost::bind(&core::check_block_rate, this));
     m_miner.on_idle();
     m_mempool.on_idle();
     return true;
@@ -1544,7 +1543,7 @@ namespace cryptonote
   //-----------------------------------------------------------------------------------------------
   bool core::check_updates()
   {
-    static const char software[] = "monero";
+    static const char software[] = "enro";
 #ifdef BUILD_TAG
     static const char buildtag[] = BOOST_PP_STRINGIZE(BUILD_TAG);
     static const char subdir[] = "cli"; // because it can never be simple
@@ -1680,52 +1679,6 @@ namespace cryptonote
       const el::Level level = el::Level::Warning;
       MCLOG_RED(level, "global", "Free space is below 1 GB on " << m_config_folder);
     }
-    return true;
-  }
-  //-----------------------------------------------------------------------------------------------
-  double factorial(unsigned int n)
-  {
-    if (n <= 1)
-      return 1.0;
-    double f = n;
-    while (n-- > 1)
-      f *= n;
-    return f;
-  }
-  //-----------------------------------------------------------------------------------------------
-  static double probability(unsigned int blocks, unsigned int expected)
-  {
-    // https://www.umass.edu/wsp/resources/poisson/#computing
-    return pow(expected, blocks) / (factorial(blocks) * exp(expected));
-  }
-  //-----------------------------------------------------------------------------------------------
-  bool core::check_block_rate()
-  {
-    if (m_offline || m_target_blockchain_height > get_current_blockchain_height())
-    {
-      MDEBUG("Not checking block rate, offline or syncing");
-      return true;
-    }
-
-    static constexpr double threshold = 1. / (864000 / DIFFICULTY_TARGET_V2); // one false positive every 10 days
-
-    const time_t now = time(NULL);
-    const std::vector<time_t> timestamps = m_blockchain_storage.get_last_block_timestamps(60);
-
-    static const unsigned int seconds[] = { 5400, 1800, 600 };
-    for (size_t n = 0; n < sizeof(seconds)/sizeof(seconds[0]); ++n)
-    {
-      unsigned int b = 0;
-      for (time_t ts: timestamps) b += ts >= now - seconds[n];
-      const double p = probability(b, seconds[n] / DIFFICULTY_TARGET_V2);
-      MDEBUG("blocks in the last " << seconds[n] / 60 << " minutes: " << b << " (probability " << p << ")");
-      if (p < threshold)
-      {
-        MWARNING("There were " << b << " blocks in the last " << seconds[n] / 60 << " minutes, there might be large hash rate changes, or we might be partitioned, cut off from the Monero network or under attack. Or it could be just sheer bad luck.");
-        break; // no need to look further
-      }
-    }
-
     return true;
   }
   //-----------------------------------------------------------------------------------------------

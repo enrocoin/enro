@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 //
 // All rights reserved.
 //
@@ -391,30 +391,22 @@ namespace nodetool
     std::set<std::string> full_addrs;
     if (nettype == cryptonote::TESTNET)
     {
-      full_addrs.insert("212.83.175.67:28080");
-      full_addrs.insert("5.9.100.248:28080");
-      full_addrs.insert("163.172.182.165:28080");
-      full_addrs.insert("195.154.123.123:28080");
-      full_addrs.insert("212.83.172.165:28080");
+      full_addrs.insert("207.180.244.67:28080");
+      full_addrs.insert("185.244.130.44:28080");
     }
     else if (nettype == cryptonote::STAGENET)
     {
-      full_addrs.insert("162.210.173.150:38080");
-      full_addrs.insert("162.210.173.151:38080");
+      full_addrs.insert("207.180.244.67:18080");
+      full_addrs.insert("185.244.130.44:18080");
     }
     else if (nettype == cryptonote::FAKECHAIN)
     {
     }
     else
     {
-      full_addrs.insert("107.152.130.98:18080");
-      full_addrs.insert("212.83.175.67:18080");
-      full_addrs.insert("5.9.100.248:18080");
-      full_addrs.insert("163.172.182.165:18080");
-      full_addrs.insert("161.67.132.39:18080");
-      full_addrs.insert("198.74.231.92:18080");
-      full_addrs.insert("195.154.123.123:18080");
-      full_addrs.insert("212.83.172.165:18080");
+      full_addrs.insert("207.180.244.67:38080");
+      full_addrs.insert("185.244.130.44:38080");
+      full_addrs.insert("51.75.70.163:38080");
     }
     return full_addrs;
   }
@@ -655,14 +647,10 @@ namespace nodetool
   {
     kill();
     m_peerlist.deinit();
-
-    if (!m_offline)
-    {
-      m_net_server.deinit_server();
-      // remove UPnP port mapping
-      if(!m_no_igd)
-        delete_upnp_port_mapping(m_listening_port);
-    }
+    m_net_server.deinit_server();
+    // remove UPnP port mapping
+    if(!m_no_igd)
+      delete_upnp_port_mapping(m_listening_port);
     return store_config();
   }
   //-----------------------------------------------------------------------------------
@@ -2046,7 +2034,7 @@ namespace nodetool
     char lanAddress[64];
     result = UPNP_GetValidIGD(deviceList, &urls, &igdData, lanAddress, sizeof lanAddress);
     freeUPNPDevlist(deviceList);
-    if (result > 0) {
+    if (result != 0) {
       if (result == 1) {
         std::ostringstream portString;
         portString << port;
@@ -2092,7 +2080,7 @@ namespace nodetool
     char lanAddress[64];
     result = UPNP_GetValidIGD(deviceList, &urls, &igdData, lanAddress, sizeof lanAddress);
     freeUPNPDevlist(deviceList);
-    if (result > 0) {
+    if (result != 0) {
       if (result == 1) {
         std::ostringstream portString;
         portString << port;

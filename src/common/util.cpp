@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -308,19 +308,10 @@ namespace tools
       StringCchCopy(pszOS, BUFSIZE, TEXT("Microsoft "));
 
       // Test for the specific product.
-      if ( osvi.dwMajorVersion == 10 )
-      {
-        if ( osvi.dwMinorVersion == 0 )
-        {
-          if( osvi.wProductType == VER_NT_WORKSTATION )
-            StringCchCat(pszOS, BUFSIZE, TEXT("Windows 10 "));
-          else StringCchCat(pszOS, BUFSIZE, TEXT("Windows Server 2016 " ));
-        }
-      }
 
       if ( osvi.dwMajorVersion == 6 )
       {
-        if ( osvi.dwMinorVersion == 0 )
+        if( osvi.dwMinorVersion == 0 )
         {
           if( osvi.wProductType == VER_NT_WORKSTATION )
             StringCchCat(pszOS, BUFSIZE, TEXT("Windows Vista "));
@@ -332,20 +323,6 @@ namespace tools
           if( osvi.wProductType == VER_NT_WORKSTATION )
             StringCchCat(pszOS, BUFSIZE, TEXT("Windows 7 "));
           else StringCchCat(pszOS, BUFSIZE, TEXT("Windows Server 2008 R2 " ));
-        }
-
-        if ( osvi.dwMinorVersion == 2 )
-        {
-          if( osvi.wProductType == VER_NT_WORKSTATION )
-            StringCchCat(pszOS, BUFSIZE, TEXT("Windows 8 "));
-          else StringCchCat(pszOS, BUFSIZE, TEXT("Windows Server 2012 " ));
-        }
-
-        if ( osvi.dwMinorVersion == 3 )
-        {
-          if( osvi.wProductType == VER_NT_WORKSTATION )
-            StringCchCat(pszOS, BUFSIZE, TEXT("Windows 8.1 "));
-          else StringCchCat(pszOS, BUFSIZE, TEXT("Windows Server 2012 R2 " ));
         }
 
         pGPI = (PGPI) GetProcAddress(
@@ -644,10 +621,10 @@ std::string get_nix_version_display_string()
   {
     ub_ctx *ctx = ub_ctx_create();
     if (!ctx) return false; // cheat a bit, should not happen unless OOM
-    char *monero = strdup("monero"), *unbound = strdup("unbound");
-    ub_ctx_zone_add(ctx, monero, unbound); // this calls ub_ctx_finalize first, then errors out with UB_SYNTAX
+    char *enro = strdup("enro"), *unbound = strdup("unbound");
+    ub_ctx_zone_add(ctx, enro, unbound); // this calls ub_ctx_finalize first, then errors out with UB_SYNTAX
     free(unbound);
-    free(monero);
+    free(enro);
     // if no threads, bails out early with UB_NOERROR, otherwise fails with UB_AFTERFINAL id already finalized
     bool with_threads = ub_ctx_async(ctx, 1) != 0; // UB_AFTERFINAL is not defined in public headers, check any error
     ub_ctx_delete(ctx);

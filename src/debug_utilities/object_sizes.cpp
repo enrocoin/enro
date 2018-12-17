@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018, The Monero Project
+// Copyright (c) 2017-2018, The Enro Project
 //
 // All rights reserved.
 //
@@ -29,7 +29,6 @@
 #include <map>
 #include "cryptonote_basic/cryptonote_basic.h"
 #include "cryptonote_basic/tx_extra.h"
-#include "cryptonote_core/cryptonote_core.h"
 #include "cryptonote_core/blockchain.h"
 #include "p2p/p2p_protocol_defs.h"
 #include "net/connection_basic.hpp"
@@ -110,12 +109,12 @@ int main(int argc, char* argv[])
   SL(tools::wallet2::unsigned_tx_set);
   SL(tools::wallet2::signed_tx_set);
 
-  SL(Monero::WalletImpl);
-  SL(Monero::AddressBookRow);
-  SL(Monero::TransactionInfoImpl);
-  SL(Monero::TransactionHistoryImpl);
-  SL(Monero::PendingTransactionImpl);
-  SL(Monero::UnsignedTransactionImpl);
+  SL(Enro::WalletImpl);
+  SL(Enro::AddressBookRow);
+  SL(Enro::TransactionInfoImpl);
+  SL(Enro::TransactionHistoryImpl);
+  SL(Enro::PendingTransactionImpl);
+  SL(Enro::UnsignedTransactionImpl);
 
   return 0;
 }

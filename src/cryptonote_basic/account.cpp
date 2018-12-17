@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -136,7 +136,6 @@ DISABLE_VS_WARNINGS(4244 4345)
   void account_base::set_null()
   {
     m_keys = account_keys();
-    m_creation_timestamp = 0;
   }
   //-----------------------------------------------------------------
   void account_base::forget_spend_key()

@@ -1,4 +1,4 @@
-// Copyright (c) 2016, Monero Research Labs
+// Copyright (c) 2016, Enro Research Labs
 //
 // Author: Shen Noether <shen.noether@gmx.com>
 //
@@ -130,7 +130,7 @@ namespace rct {
         BEGIN_SERIALIZE_OBJECT()
           FIELD(mask)
           FIELD(amount)
-          // FIELD(senderPk) // not serialized, as we do not use it in monero currently
+          // FIELD(senderPk) // not serialized, as we do not use it in enro currently
         END_SERIALIZE()
     };
 

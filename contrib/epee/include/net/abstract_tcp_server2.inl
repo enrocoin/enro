@@ -1,7 +1,7 @@
 /**
 @file
 @author from CrypoNote (see copyright below; Andrey N. Sabelnikov)
-@monero rfree
+@enro rfree
 @brief the connection templated-class for one peer connection
 */
 // Copyright (c) 2006-2013, Andrey N. Sabelnikov, www.sabelnikov.net
@@ -43,8 +43,6 @@
 #include <boost/date_time/posix_time/posix_time.hpp> // TODO
 #include <boost/thread/thread.hpp> // TODO
 #include <boost/thread/condition_variable.hpp> // TODO
-#include "warnings.h"
-#include "string_tools.h"
 #include "misc_language.h"
 #include "net/local_ip.h"
 #include "pragma_comp_defs.h"
@@ -52,6 +50,8 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+
+#include "../../../../src/cryptonote_core/cryptonote_core.h" // e.g. for the send_stop_signal()
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net"
@@ -149,8 +149,10 @@ PRAGMA_WARNING_DISABLE_VS(4355)
     const unsigned long ip_{boost::asio::detail::socket_ops::host_to_network_long(remote_ep.address().to_v4().to_ulong())};
     m_local = epee::net_utils::is_ip_loopback(ip_) || epee::net_utils::is_ip_local(ip_);
 
-    // create a random uuid, we don't need crypto strength here
-    const boost::uuids::uuid random_uuid = boost::uuids::random_generator()();
+    // create a random uuid
+    boost::uuids::uuid random_uuid;
+    // that stuff turns out to be included, even though it's from src... Taking advantage
+    random_uuid = crypto::rand<boost::uuids::uuid>();
 
     context.set_details(random_uuid, epee::net_utils::ipv4_network_address(ip_, remote_ep.port()), is_income);
     _dbg3("[sock " << socket_.native_handle() << "] new connection from " << print_connection_context_short(context) <<
@@ -459,7 +461,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
 					if (!all_ok) {
 						MDEBUG("do_send() DONE ***FAILED*** from packet="<<cb<<" B for ptr="<<ptr);
 						MDEBUG("do_send() SEND was aborted in middle of big package - this is mostly harmless "
-							<< " (e.g. peer closed connection) but if it causes trouble tell us at #monero-dev. " << cb);
+							<< " (e.g. peer closed connection) but if it causes trouble tell us at #enro-dev. " << cb);
 						return false; // partial failure in sending
 					}
 					pos = pos+len;

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 //
 // All rights reserved.
 //
@@ -544,7 +544,7 @@ public:
   /**
    * @brief An empty constructor.
    */
-  BlockchainDB(): m_hardfork(NULL), m_open(false) { }
+  BlockchainDB(): m_open(false) { }
 
   /**
    * @brief An empty destructor.

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -792,7 +792,7 @@ TEST(Serialization, portability_wallet)
   }
 }
 
-#define OUTPUT_EXPORT_FILE_MAGIC "Monero output export\003"
+#define OUTPUT_EXPORT_FILE_MAGIC "Enro output export\003"
 TEST(Serialization, portability_outputs)
 {
   // read file
@@ -908,7 +908,7 @@ TEST(Serialization, portability_outputs)
   ASSERT_TRUE(td2.m_pk_index == 0);
 }
 
-#define UNSIGNED_TX_PREFIX "Monero unsigned tx set\003"
+#define UNSIGNED_TX_PREFIX "Enro unsigned tx set\003"
 TEST(Serialization, portability_unsigned_tx)
 {
   const boost::filesystem::path filename = unit_test::data_dir / "unsigned_monero_tx";
@@ -1056,7 +1056,7 @@ TEST(Serialization, portability_unsigned_tx)
   ASSERT_TRUE(td2.m_pk_index == 0);
 }
 
-#define SIGNED_TX_PREFIX "Monero signed tx set\003"
+#define SIGNED_TX_PREFIX "Enro signed tx set\003"
 TEST(Serialization, portability_signed_tx)
 {
   const boost::filesystem::path filename = unit_test::data_dir / "signed_monero_tx";

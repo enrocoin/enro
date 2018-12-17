@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Enro Project Copyright (c) 2014-2018, The Monero Project
 //
 // All rights reserved.
 //
@@ -35,7 +35,7 @@
 
 using namespace std;
 
-namespace Monero {
+namespace Enro {
 namespace Utils {
 
 bool isAddressLocal(const std::string &address)
@@ -61,4 +61,4 @@ void onStartup()
 
 } // namespace
 
-namespace Bitmonero = Monero;
+namespace Bitmonero = Enro;
